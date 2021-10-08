@@ -23,9 +23,8 @@ object BitmapUtils {
         var dialogW = calculateDialogWidthFromBitmap(actualWidth = bmpW)
 
         val _textSizeTmp = dialogW * 0.1f
-        val gapInLines = _textSizeTmp * 1.25f
-
-        //val textLines = calculateTextLines(waterMarkData = waterMarkData)
+        var gapInLines = _textSizeTmp * 1.25f
+        if (gapInLines > 30) gapInLines = 30f
 
         dialogH = calculateDialogHeight(
             waterMarks = waterMarkData.waterMarks,
@@ -34,30 +33,21 @@ object BitmapUtils {
         ) + gapInLines
 
 
-        /*val linesY = calculateLinesYAxisPoints(
-            rootHeight = bmpH.toFloat(),
-            dialogHeight = dialogH,
-            dialogWidth = dialogW,
-            gapInLines = gapInLines,
-            waterMarks = waterMarkData.waterMarks
-        )*/
-
         val wmts = arrayListOf<Data.WaterMarkText>()
         waterMarkData.waterMarks.map {
             val wmt = it
-            var txtSize: Float
             if (wmt is Data.WaterMarkText) {
-                txtSize = wmt.textSize * dialogW
-                wmt.textSize = txtSize
+                wmt.textSize = wmt.textSize * dialogW
                 wmts.add(wmt)
             }
         }
 
-        val linesY = calculateLinesYAxisPoints(
+
+        val linesY = Utils.calculateLinesYAxisPoints(
             rootHeight = bmpH.toFloat(),
             dialogHeight = dialogH,
-            dialogWidth = dialogW,
             gapInLines = gapInLines,
+            position = waterMarkData.position,
             waterMarks = waterMarkData.waterMarks
         )
 
@@ -66,6 +56,14 @@ object BitmapUtils {
         }.measureText("  ")
         dialogW = calculateDialogWidth(waterMarks = waterMarkData.waterMarks, dialogWidth = dialogW)
         dialogW += (textPadding * 2f)
+
+        val linesX = Utils.calculateLinesXAxisPoints(
+            rootWidth = bmpW.toFloat(),
+            dialogWidth = dialogW,
+            textPadding = textPadding,
+            position = waterMarkData.position,
+            waterMarks = waterMarkData.waterMarks
+        )
 
         val canvas = Canvas(tmpBmp)
 
@@ -83,13 +81,12 @@ object BitmapUtils {
         })
 
         wmts.forEachIndexed { index, waterMarkText ->
-            Log.d("mridx", "addTags: $waterMarkText")
             val paint = Paint().apply {
                 textSize = waterMarkText.textSize
                 color = waterMarkText.color
                 typeface = waterMarkText.typeFace
             }
-            canvas.drawText(waterMarkText.text, textPadding, linesY[index], paint)
+            canvas.drawText(waterMarkText.text, linesX[index], linesY[index], paint)
         }
 
 
@@ -141,6 +138,7 @@ object BitmapUtils {
     }
 
 
+    @Deprecated("")
     private fun calculateDialogHeight(
         waterMarks: ArrayList<Data.WaterMark>,
         dialogWidth: Float,
@@ -156,8 +154,27 @@ object BitmapUtils {
     }
 
 
+    @Deprecated("")
     private fun calculateDialogWidthFromBitmap(actualWidth: Int): Float {
         return when {
+            /*actualWidth > 4000 -> {
+                actualWidth * 0.3f
+            }
+            actualWidth > 3800 -> {
+                actualWidth * 0.45f
+            }
+            actualWidth > 3600 -> {
+                actualWidth * 0.3f
+            }
+            actualWidth > 3400 -> {
+                actualWidth * 0.25f
+            }
+            actualWidth > 3000 -> {
+                actualWidth * 0.2f
+            }
+            actualWidth > 2600 -> {
+                actualWidth * 05f
+            }*/
             actualWidth > 2200 -> {
                 actualWidth * 0.1f
             }
@@ -182,6 +199,7 @@ object BitmapUtils {
         }
     }
 
+    @Deprecated("")
     private fun calculateDialogWidth(
         waterMarks: ArrayList<Data.WaterMark>,
         dialogWidth: Float
@@ -198,6 +216,7 @@ object BitmapUtils {
         return dw
     }
 
+    @Deprecated("")
     private fun measureText(text: String, txtSize: Float, typeFace: Typeface): Float {
         return Paint().apply {
             textSize = txtSize
@@ -396,6 +415,7 @@ object BitmapUtils {
         return linesY
     }
 
+    @Deprecated("")
     private fun calculateLinesYAxisPoints(
         rootHeight: Float,
         dialogHeight: Float,
@@ -406,13 +426,11 @@ object BitmapUtils {
         val linesY = arrayListOf<Float>()
         waterMarks.forEach {
             if (it is Data.WaterMarkText) {
-                //txtSize = (it.textSize * dialogWidth)
                 val y = if (linesY.isEmpty()) {
                     (rootHeight + it.textSize + gapInLines) - dialogHeight
                 } else {
                     linesY.last() + it.textSize + gapInLines
                 }
-                //val y = (rootHeight + txtSize + gapInLines) - dialogHeight
                 linesY.add(y)
             }
         }

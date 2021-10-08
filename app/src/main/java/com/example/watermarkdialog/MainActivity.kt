@@ -4,6 +4,7 @@ import android.Manifest
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.media.Image
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,11 +16,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.mridx.watermarkdialog.BitmapUtils
 import com.mridx.watermarkdialog.Data
 import com.mridx.watermarkdialog.Processor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.lang.reflect.Type
 import java.util.*
@@ -28,6 +31,9 @@ class MainActivity : AppCompatActivity() {
 
 
     var fileUri: Uri? = null
+
+    var position = Data.WaterMarkPosition.BOTTOM_LEFT
+    var HQ = false
 
     private val captureImage = registerForActivityResult(ActivityResultContracts.TakePicture()) {
         if (!it) return@registerForActivityResult
@@ -44,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                 maxWidth = 1920.0f,
                 maxHeight = 1920.0f,
                 waterMarkData = Data.WaterMarkDataV2(
-                    position = Data.WaterMarkPosition.BOTTOM_LEFT,
+                    position = position,
                     waterMarks = arrayListOf(
                         Data.WaterMarkText(
                             "Latitude : 26.000000", Color.BLACK
@@ -58,29 +64,46 @@ class MainActivity : AppCompatActivity() {
                         Data.WaterMarkText(
                             text = "Uploaded By Mridul Baishya",
                             color = Color.RED,
-                            textSize = 0.3f,
+                            textSize = 0.15f,
                             typeFace = Typeface.DEFAULT
                         ),
                         Data.WaterMarkText(
                             "Created By MriDx",
                             Color.YELLOW,
-                            textSize = 0.5f,
+                            textSize = 0.18f,
                             typeFace = Typeface.create("OpenSans", Typeface.BOLD)
                         ),
                     )
                 )
             )
 
-            Utils.saveAsPNG(bmp, createFileSave())
-            Utils.saveAsJPG(bmp, createFileSave())
+            val img = createFileSave()
 
+            if (HQ)
+                Utils.saveAsPNG(bmp, img)
+            else
+                Utils.saveAsJPG(bmp, img)
+
+            val imgFile = File(img)
+
+            withContext(Dispatchers.Main) {
+                findViewById<ImageView>(R.id.imageView).setImageURI(imgFile.toUri())
+            }
 
         }
 
     }
 
-    private fun createFileSave(): String {
+    /*private fun createFileSave(): String {
         val f = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "cap_${Date().time}.png")
+        f.createNewFile()
+        return f.path
+    }*/
+
+    private fun createFileSave(): String {
+        val fp = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "processed")
+        fp.mkdirs()
+        val f = File(fp.path, "${position}_${Date().time}.png")
         f.createNewFile()
         return f.path
     }
@@ -95,10 +118,29 @@ class MainActivity : AppCompatActivity() {
 
         cameraPermission.launch(Manifest.permission.CAMERA)
 
-        findViewById<Button>(R.id.btn).setOnClickListener {
+        findViewById<Button>(R.id.btnTopLeft).setOnClickListener {
+            position = Data.WaterMarkPosition.TOP_LEFT
             captureImage.launch(createFileUri())
         }
 
+        findViewById<Button>(R.id.btnTopRight).setOnClickListener {
+            position = Data.WaterMarkPosition.TOP_RIGHT
+            captureImage.launch(createFileUri())
+        }
+
+        findViewById<Button>(R.id.btnBottomLeft).setOnClickListener {
+            position = Data.WaterMarkPosition.BOTTOM_LEFT
+            captureImage.launch(createFileUri())
+        }
+
+        findViewById<Button>(R.id.btnBottomRight).setOnClickListener {
+            position = Data.WaterMarkPosition.BOTTOM_RIGHT
+            captureImage.launch(createFileUri())
+        }
+
+        findViewById<SwitchMaterial>(R.id.switchMaterial).setOnCheckedChangeListener { compoundButton, b ->
+            HQ = b
+        }
 
     }
 

@@ -30,7 +30,7 @@ object Data {
         var text: String,
         @ColorInt var color: Int,
         var textSize: Float = 0.1f,
-        var typeFace: Typeface = Typeface.DEFAULT,
+        var typeFace: Typeface = Typeface.create("Roboto", Typeface.NORMAL),
     ) : WaterMark()
 
 

@@ -3,6 +3,31 @@ plugins {
     id 'kotlin-android'
 }
 
+
+ext {
+    PUBLISH_GROUP_ID = 'io.github.mridx'
+    PUBLISH_VERSION = '1.2'
+    PUBLISH_ARTIFACT_ID = 'WaterMarkDialog'
+    PUBLISH_DESCRIPTION = 'WaterMarkDialog Android Library'
+    PUBLISH_URL = 'https://github.com/MriDx/WaterMarkDialog'
+    PUBLISH_LICENSE_NAME = 'Apache License'
+    PUBLISH_LICENSE_URL =
+            'https://github.com/MriDx/WaterMarkDialog/blob/master/LICENCE.txt'
+    PUBLISH_DEVELOPER_ID = 'mridx'
+    PUBLISH_DEVELOPER_NAME = 'MriDx'
+    PUBLISH_DEVELOPER_EMAIL = 'mridulbaishya28@gmail.com'
+    PUBLISH_SCM_CONNECTION =
+            'scm:git:github.com/mridx/WaterMarkDialog.git'
+    PUBLISH_SCM_DEVELOPER_CONNECTION =
+            'scm:git:ssh://github.com/mridx/WaterMarkDialog.git'
+    PUBLISH_SCM_URL =
+            'https://github.com/mridx/WaterMarkDialog/tree/master'
+}
+
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
+
+
+
 android {
     compileSdk 31
 

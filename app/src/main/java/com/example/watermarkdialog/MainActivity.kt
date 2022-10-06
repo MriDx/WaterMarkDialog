@@ -1,5 +1,6 @@
 package com.example.watermarkdialog
 
+import com.example.watermarkdialog.R
 import android.Manifest
 import android.graphics.Color
 import android.graphics.Paint
@@ -14,6 +15,8 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -45,21 +48,38 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
 
+            /*val file = File(fileUri!!.path)
+
+            val bmp = Processor.process(
+                file = file, maxHeight = 720f, maxWidth = 720f, waterMarkData = Data.WaterMarkData(
+                    waterMarks = mapOf(
+                        "Hello" to "World",
+                        "Game" to "Changer",
+                        "Processed via" to "WaterMarkDialog-MriDx"
+                    ), position = Data.WaterMarkPosition.BOTTOM_LEFT
+                ), typeface = ResourcesCompat.getFont(this@MainActivity, R.font.aclonica)!!
+            ) ?: throw Exception("Image processing error !")*/
+
             val bmp = Processor.process(
                 view = findViewById(R.id.imageView),
                 maxWidth = 1920.0f,
                 maxHeight = 1920.0f,
                 waterMarkData = Data.WaterMarkDataV2(
-                    position = position,
-                    waterMarks = arrayListOf(
+                    position = position, waterMarks = arrayListOf(
                         Data.WaterMarkText(
                             "Latitude : 26.000000", Color.BLACK
                         ),
                         Data.WaterMarkText(
-                            "Longitude : 26.000000", Color.BLACK
+                            "Longitude : 26.000000",
+                            Color.BLACK,
+                            typeFace = ResourcesCompat.getFont(
+                                this@MainActivity, R.font.roboto_regular
+                            ) ?: Typeface.SERIF
                         ),
                         Data.WaterMarkText(
-                            "Accuracy : 26 M", Color.BLACK
+                            "Accuracy : 26 M", Color.BLACK, typeFace = ResourcesCompat.getFont(
+                                this@MainActivity, R.font.aclonica
+                            )!!
                         ),
                         Data.WaterMarkText(
                             text = "Uploaded By Mridul Baishya",
@@ -70,8 +90,7 @@ class MainActivity : AppCompatActivity() {
                         Data.WaterMarkText(
                             "Created By MriDx",
                             Color.YELLOW,
-                            textSize = 0.18f,
-                            typeFace = Typeface.create("OpenSans", Typeface.BOLD)
+                            textSize = 0.12f,
                         ),
                     )
                 )
@@ -79,10 +98,8 @@ class MainActivity : AppCompatActivity() {
 
             val img = createFileSave()
 
-            if (HQ)
-                Utils.saveAsPNG(bmp, img)
-            else
-                Utils.saveAsJPG(bmp, img)
+            if (HQ) Utils.saveAsPNG(bmp, img)
+            else Utils.saveAsJPG(bmp, img)
 
             val imgFile = File(img)
 
@@ -109,8 +126,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val cameraPermission =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        }
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,9 +170,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun File.createFileUri(): Uri {
         return FileProvider.getUriForFile(
-            this@MainActivity,
-            "${BuildConfig.APPLICATION_ID}.FileProvider",
-            this
+            this@MainActivity, "${BuildConfig.APPLICATION_ID}.FileProvider", this
         )
     }
 

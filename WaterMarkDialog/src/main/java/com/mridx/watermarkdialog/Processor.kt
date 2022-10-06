@@ -88,7 +88,8 @@ object Processor {
         file: File,
         maxHeight: Float = 1920.0f,
         maxWidth: Float = 1920.0f,
-        waterMarkData: Data.WaterMarkData
+        waterMarkData: Data.WaterMarkData,
+        typeface: Typeface,
     ): Bitmap? {
         val bitmap = file.toBitmap(maxHeight = maxHeight, maxWidth = maxWidth)
             ?: throw Exception("Out of memory")
@@ -98,7 +99,7 @@ object Processor {
          var actualWidth = bmp.width*/
 
         val processedBmp =
-            BitmapUtils.addTags(bmp = bmp, waterMarkData = waterMarkData, textSizeRatio = 0.1f)
+            BitmapUtils.addTags(bmp = bmp, waterMarkData = waterMarkData, textSizeRatio = 0.1f, typeFace = typeface)
 
         return processedBmp
 
@@ -108,12 +109,13 @@ object Processor {
         view: ImageView,
         maxHeight: Float = 1920.0f,
         maxWidth: Float = 1920.0f,
-        waterMarkData: Data.WaterMarkData
+        waterMarkData: Data.WaterMarkData,
+        typeface: Typeface,
     ): Bitmap? {
         val bitmap = view.toBitmap()
         val bmp = bitmap.copy(bitmap.config, true)
         val processedBmp =
-            BitmapUtils.addTags(bmp = bmp, waterMarkData = waterMarkData, textSizeRatio = 0.1f)
+            BitmapUtils.addTags(bmp = bmp, waterMarkData = waterMarkData, textSizeRatio = 0.1f, typeFace = typeface)
                 ?: throw Exception("Bitmap can not be null !")
 
         return compressBitmap(bitmap = processedBmp, maxHeight = maxHeight, maxWidth = maxWidth)

@@ -7,6 +7,7 @@ package com.mridx.watermarkdialog
 
 import android.graphics.*
 import android.util.Log
+import androidx.core.content.res.ResourcesCompat
 
 object BitmapUtils {
 
@@ -86,6 +87,7 @@ object BitmapUtils {
                 color = waterMarkText.color
                 typeface = waterMarkText.typeFace
             }
+            Log.d("kaku", "addTags: ${waterMarkText.textSize}")
             canvas.drawText(waterMarkText.text, linesX[index], linesY[index], paint)
         }
 
@@ -227,7 +229,8 @@ object BitmapUtils {
     fun addTags(
         bmp: Bitmap,
         waterMarkData: Data.WaterMarkData,
-        textSizeRatio: Float = 0.1f
+        textSizeRatio: Float = 0.1f,
+        typeFace: Typeface,
     ): Bitmap? {
 
         val tmpBmp = bmp.copy(bmp.config, true)
@@ -254,7 +257,7 @@ object BitmapUtils {
         val textPaint = Paint().apply {
             color = Color.BLACK
             textSize = _textSize
-            typeface = Typeface.DEFAULT
+            typeface = typeFace
         }
 
         val linesY = calculateLinesYAxisPoints(

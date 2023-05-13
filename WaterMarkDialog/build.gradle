@@ -6,7 +6,7 @@ plugins {
 
 ext {
     PUBLISH_GROUP_ID = 'io.github.mridx'
-    PUBLISH_VERSION = '1.2'
+    PUBLISH_VERSION = '1.7'
     PUBLISH_ARTIFACT_ID = 'WaterMarkDialog'
     PUBLISH_DESCRIPTION = 'WaterMarkDialog Android Library'
     PUBLISH_URL = 'https://github.com/MriDx/WaterMarkDialog'

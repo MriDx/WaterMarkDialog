@@ -12,6 +12,9 @@ import java.io.File
 
 object Processor {
 
+    /**
+     * convert a file to bitmap
+     */
     private fun File.toBitmap(maxHeight: Float, maxWidth: Float): Bitmap? {
         val options = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
@@ -48,7 +51,7 @@ object Processor {
             inDither = false
             inPurgeable = true
             inInputShareable = true
-            inTempStorage = ByteArray(16 * 1024)
+            inTempStorage = ByteArray(2 * 1024)
         }
 
         try {
@@ -132,6 +135,49 @@ object Processor {
         val processedBitmap = BitmapUtils.addTags(bmp = bmp, waterMarkData = waterMarkData)
         return processedBitmap
     }
+
+    fun processV2(
+        view: ImageView,
+        maxHeight: Float = 1920.0f,
+        maxWidth: Float = 1920.0f,
+        waterMarkData: Data.WaterMarkDataV2,
+    ): Bitmap? {
+        /*val bitmap = file.toBitmap(maxHeight = maxHeight, maxWidth = maxWidth)
+            ?: throw Exception("Out of memory")*/
+
+        val bitmap = view.toBitmap()
+
+        var bmp = bitmap.copy(bitmap.config, true)
+
+        val processedBmp = BitmapUtils.addTagsV2(bitmap = bmp, waterMarkData = waterMarkData)
+
+        // BitmapUtils.addTags(bmp = bmp, waterMarkData = waterMarkData, textSizeRatio = 0.1f, typeFace = typeface)
+
+        return processedBmp
+
+    }
+
+    fun processV2(
+        file: File,
+        maxHeight: Float = 1920.0f,
+        maxWidth: Float = 1920.0f,
+        waterMarkData: Data.WaterMarkDataV2,
+    ): Bitmap? {
+        val bitmap = file.toBitmap(maxHeight = maxHeight, maxWidth = maxWidth)
+            ?: throw Exception("Out of memory")
+
+        //val bitmap = view.toBitmap()
+
+        var bmp = bitmap.copy(bitmap.config, true)
+
+        val processedBmp = BitmapUtils.addTagsV2(bitmap = bmp, waterMarkData = waterMarkData)
+
+        // BitmapUtils.addTags(bmp = bmp, waterMarkData = waterMarkData, textSizeRatio = 0.1f, typeFace = typeface)
+
+        return processedBmp
+
+    }
+
 
     private fun ImageView.toBitmap(): Bitmap {
         if (this.drawable == null) throw Exception("Provided ImageView does not have drawable bitmap")

@@ -15,21 +15,27 @@ object Utils {
             bitmapWidth > 2200 -> {
                 bitmapWidth * 0.1f
             }
+
             bitmapWidth > 1920 -> {
                 bitmapWidth * 0.15f
             }
+
             bitmapWidth > 1600 -> {
                 bitmapWidth * 0.2f
             }
+
             bitmapWidth > 1366 -> {
                 bitmapWidth * 0.25f
             }
+
             bitmapWidth > 1080 -> {
                 bitmapWidth * 0.3f
             }
+
             bitmapWidth > 720 -> {
                 bitmapWidth * 0.35f
             }
+
             else -> {
                 bitmapWidth * 0.4f
             }
@@ -153,20 +159,35 @@ object Utils {
         dialogHeight: Float,
         gapInLines: Float,
         position: Data.WaterMarkPosition,
-        waterMarks: ArrayList<Data.WaterMark>
+        waterMarks: ArrayList<Data.WaterMark>,
+        overrideTextSize: Float = 0f,
     ): ArrayList<Float> {
         val linesY = arrayListOf<Float>()
         var _rootHeight = rootHeight - dialogHeight
+
         if (position == Data.WaterMarkPosition.TOP_LEFT || position == Data.WaterMarkPosition.TOP_RIGHT)
             _rootHeight = 0f
+
         waterMarks.forEach {
+
             if (it is Data.WaterMarkText) {
-                val y = if (linesY.isEmpty()) {
+
+                /*val y = if (linesY.isEmpty()) {
                     _rootHeight + it.textSize + gapInLines
                 } else {
                     linesY.last() + it.textSize + gapInLines
+                }*/
+
+                val y = if (linesY.isEmpty()) {
+                    _rootHeight + overrideTextSize + overrideTextSize + gapInLines
+                } else {
+                    linesY.last() + overrideTextSize + gapInLines
                 }
+
+                Log.d("kaku", "calculateLinesYAxisPoints: Y point is $y")
+
                 linesY.add(y)
+
             }
         }
         return linesY
@@ -189,7 +210,9 @@ object Utils {
         dialogWidth: Float,
         textPadding: Float,
         position: Data.WaterMarkPosition,
-        waterMarks: ArrayList<Data.WaterMark>
+        waterMarks: ArrayList<Data.WaterMark>,
+        hasLogo: Boolean = false,
+        logoWidth: Float = 0f,
     ): ArrayList<Float> {
         val linesX = arrayListOf<Float>()
         var _rootWidth = 0f
@@ -197,7 +220,7 @@ object Utils {
             _rootWidth = rootWidth - dialogWidth
         waterMarks.forEach {
             if (it is Data.WaterMarkText) {
-                val x = _rootWidth + textPadding
+                val x = _rootWidth + textPadding + logoWidth
                 linesX.add(x)
             }
         }

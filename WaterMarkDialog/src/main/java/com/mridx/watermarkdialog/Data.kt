@@ -5,6 +5,7 @@
 
 package com.mridx.watermarkdialog
 
+import android.graphics.Bitmap
 import android.graphics.Typeface
 import androidx.annotation.ColorInt
 
@@ -21,7 +22,8 @@ object Data {
 
     data class WaterMarkDataV2(
         var waterMarks: ArrayList<WaterMark>,
-        var position: WaterMarkPosition
+        var position: WaterMarkPosition,
+        var logo: WaterMarkImage? = null
     )
 
 
@@ -31,6 +33,12 @@ object Data {
         @ColorInt var color: Int,
         var textSize: Float = 0.1f,
         var typeFace: Typeface = Typeface.create("Roboto", Typeface.NORMAL),
+    ) : WaterMark()
+
+    data class WaterMarkImage(
+        var imageBitmap: Bitmap,
+        var height: Float = 80f,
+        var width: Float = 80f,
     ) : WaterMark()
 
 

@@ -1,34 +1,28 @@
 package com.example.watermarkdialog
 
-import com.example.watermarkdialog.R
 import android.Manifest
+import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.Typeface
-import android.media.Image
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.switchmaterial.SwitchMaterial
-import com.mridx.watermarkdialog.BitmapUtils
 import com.mridx.watermarkdialog.Data
 import com.mridx.watermarkdialog.Processor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.lang.reflect.Type
-import java.util.*
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,9 +42,10 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
 
-            /*val file = File(fileUri!!.path)
+            //val file = File(fileUri!!.path)
 
-            val bmp = Processor.process(
+
+            /*val bmp = Processor.process(
                 file = file, maxHeight = 720f, maxWidth = 720f, waterMarkData = Data.WaterMarkData(
                     waterMarks = mapOf(
                         "Hello" to "World",
@@ -60,10 +55,10 @@ class MainActivity : AppCompatActivity() {
                 ), typeface = ResourcesCompat.getFont(this@MainActivity, R.font.aclonica)!!
             ) ?: throw Exception("Image processing error !")*/
 
-            val bmp = Processor.process(
-                view = findViewById(R.id.imageView),
-                maxWidth = 1920.0f,
-                maxHeight = 1920.0f,
+            val bmp = Processor.processV2(
+                view = findViewById<ImageView>(R.id.imageView),
+                maxWidth = 720.0f,
+                maxHeight = 720.0f,
                 waterMarkData = Data.WaterMarkDataV2(
                     position = position, waterMarks = arrayListOf(
                         Data.WaterMarkText(
@@ -87,14 +82,17 @@ class MainActivity : AppCompatActivity() {
                             textSize = 0.15f,
                             typeFace = Typeface.DEFAULT
                         ),
-                        Data.WaterMarkText(
+                        /*Data.WaterMarkText(
                             "Created By MriDx",
                             Color.YELLOW,
                             textSize = 0.12f,
-                        ),
+                        ),*/
+                    ),
+                    logo = Data.WaterMarkImage(
+                        imageBitmap = BitmapFactory.decodeResource(resources, R.drawable.jjm_logo),
                     )
-                )
-            )
+                ),
+            ) ?: throw Exception("Image processing error !")
 
             val img = createFileSave()
 
